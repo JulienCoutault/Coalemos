@@ -1,0 +1,25 @@
+#!/usr/bin/env python3
+
+import pywikibot
+from club import Club
+
+clubs = [
+    'Stade_français_Paris_rugby'
+]
+
+site = pywikibot.Site();
+site.login()
+
+sf = Club(site, clubs[0])
+print(sf.get())
+
+# brouillon = pywikibot.Page(site, u'Utilisateur:CoalémosBot/Brouillon')
+#
+# page = pywikibot.Page(site, pages[0])
+#
+# text = page.get()
+#
+# print(text)
+
+# brouillon.text =
+# brouillon.save('/* BOT */')
