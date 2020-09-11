@@ -64,6 +64,24 @@ class CoalemosBot():
 
         brouillon.save('([[bot]]) ' + msg, botflag=True)
 
+    def updateUserContibutions(self, username):
+        user = pywikibot.User(self.site, username)
+        userPage = user.getUserPage()
+        text = user.get()
+        contributions = user.editCount()
+        if contributions < 2000:
+            contributions = contributions - contributions % 100
+        else:
+            contributions = contributions - contributions % 1000
+
+        regexBox = r'{{Utilisateur Contributions\|\d+}}'
+        box = re.search(regexBox, text, flags=re.IGNORECASE).group(0)
+        newBox = '{{Utilisateur Contributions|'+str(contributions)+'}}'
+        if box != newBox:
+            # Need an update
+            userPage.text = re.sub(box, newBox, text, flags=re.IGNORECASE)
+            userPage.save('([[bot]]) Mise à jour de [[Modèle:Utilisateur Contributions]]')
+
     def translate(self, title):
         text = pywikibot.Page(self.site, title).get()
 

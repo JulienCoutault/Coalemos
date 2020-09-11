@@ -20,11 +20,12 @@ site.login()
 coalemos = CoalemosBot(site, pages)
 # coalemos.addCategory("Handball")
 # coalemos.addCategory("Équipe nationale de handball")
-coalemos.addCategory("Championnat panaméricain féminin de handball")
+# coalemos.addCategory("Championnat panaméricain féminin de handball")
 # coalemos.addCategory("Championnat panaméricain masculin de handball")
-coalemos.cleanRedirect()
+# coalemos.cleanRedirect()
+
+coalemos.updateUserContibutions('Programmateur01')
 
 
 
-
-coalemos.cleanDraft()
+# coalemos.cleanDraft()
