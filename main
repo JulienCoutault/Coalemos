@@ -14,18 +14,21 @@ pages = [
     "Modèle:Feuille de match handball",
 ]
 
-site = pywikibot.Site();
-site.login()
+pages = []
 
-coalemos = CoalemosBot(site, pages)
-# coalemos.addCategory("Handball")
-# coalemos.addCategory("Équipe nationale de handball")
-# coalemos.addCategory("Championnat panaméricain féminin de handball")
-# coalemos.addCategory("Championnat panaméricain masculin de handball")
-# coalemos.cleanRedirect()
+if __name__ == '__main__':
+    site = pywikibot.Site();
+    site.login()
 
-coalemos.updateUserContibutions('Programmateur01')
+    coalemos = CoalemosBot(site, pages)
+    # coalemos.addCategory("Handball")
+    coalemos.addCategory("Équipe nationale de handball")
+    coalemos.addCategory("Championnat panaméricain féminin de handball")
+    coalemos.addCategory("Championnat panaméricain masculin de handball")
+    coalemos.fixInternalLink()
 
+    # coalemos.updateUserContibutions('Programmateur01')
 
+    # coalemos.translate("1981 Pan American Men's Handball Championship")
 
-# coalemos.cleanDraft()
+    # coalemos.cleanDraft()

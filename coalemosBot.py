@@ -2,8 +2,14 @@ import re
 
 import pywikibot
 
+from scripts.updateUserContributionsBox import updateUserContributionsBox
+from scripts.fixInternalLink import fixInternalLink
+from scripts.startTranslate.handballPage import handballPage
+
+
 class CoalemosBot():
     pages = []
+
     def __init__(self, site, pages = []):
         self.site = site
         for pageName in pages:
@@ -20,35 +26,28 @@ class CoalemosBot():
     def cleanDraft(self):
         self.updateDraft('')
 
-    def cleanRedirect(self):
+    def fixInternalLink(self):
         for page in self.pages:
-            print('-------------')
-            print(page.title())
             # if the current page is already a redirection page
             while page.isRedirectPage():
                 page = pywikibot.Page(self.site, page.getRedirectTarget().title())
 
-            for pageRef in page.getReferences(filter_redirects=True):
-                print(pageRef.title())
-                print('Model : ')
-                for pageToRedirect in pageRef.getReferences(only_template_inclusion=True):
-                    print('- '+pageToRedirect.title())
-                    text = pageToRedirect.get()
-                    self.updateDraft(text, '[[{}]] Copie'.format(pageToRedirect.title()))
-                    text = re.sub(r'{{' + pageRef.title(with_ns=False), r'{{' + page.title(with_ns=False), text, flags=re.IGNORECASE)
-                    self.updateDraft(text, '[[{}]] cleanRedirect'.format(pageToRedirect.title()))
+            for pageRedirect in page.getReferences(filter_redirects=True):
+                # print(pageRedirect.title())
 
-                print('Link : ')
-                for pageToRedirect in pageRef.getReferences():
-                    print('- '+pageToRedirect.title())
-                    text = pageToRedirect.get()
-                    self.updateDraft(text, '[[{}]] Copie'.format(pageToRedirect.title()))
-                    text = re.sub(r'\[\[' + pageRef.title(with_ns=False), '[[' + page.title(with_ns=False), text, flags=re.IGNORECASE)
-                    self.updateDraft(text, '[[{}]] cleanRedirect'.format(pageToRedirect.title()))
+                # print('Link : ')
+                for pageWithRedirect in pageRedirect.getReferences():
+                    print('-------------')
+                    print('- page : ' + page.title())
+                    print('- pageRedirect : ' + pageRedirect.title())
+                    print('- pageWithRedirect : ' + pageWithRedirect.title())
+                    fixInternalLink(pageWithRedirect.title())
+                    # fixInternalLink(u'Utilisateur:CoalémosBot/Brouillon')
+
 
 
     def get(self, title):
-        self.title = title;
+        self.title = title
         self.page = pywikibot.Page(self.site, title)
         return self.page
 
@@ -62,28 +61,13 @@ class CoalemosBot():
         brouillon.text += text
         brouillon.text += '\n{{page personnelle}}'
 
-        brouillon.save('([[bot]]) ' + msg, botflag=True)
+        brouillon.save('([[bot]]) ' + msg, minor=False, botflag=True)
 
     def updateUserContibutions(self, username):
-        user = pywikibot.User(self.site, username)
-        userPage = user.getUserPage()
-        text = user.get()
-        contributions = user.editCount()
-        if contributions < 2000:
-            contributions = contributions - contributions % 100
-        else:
-            contributions = contributions - contributions % 1000
+        updateUserContributionsBox(username)
 
-        regexBox = r'{{Utilisateur Contributions\|\d+}}'
-        box = re.search(regexBox, text, flags=re.IGNORECASE).group(0)
-        newBox = '{{Utilisateur Contributions|'+str(contributions)+'}}'
-        if box != newBox:
-            # Need an update
-            userPage.text = re.sub(box, newBox, text, flags=re.IGNORECASE)
-            userPage.save('([[bot]]) Mise à jour de [[Modèle:Utilisateur Contributions]]')
-
-    def translate(self, title):
-        text = pywikibot.Page(self.site, title).get()
+    def translate(self, pageName):
+        handballPage(pageName)
 
 
     def replaceModelDate(self, page):
