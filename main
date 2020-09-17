@@ -6,26 +6,19 @@ from coalemosBot import CoalemosBot
 
 from club import Club
 
-clubs = [
-    'Stade_français_Paris_rugby'
-]
-
+# "Modèle:Feuille de match handball",
 pages = [
-    "Modèle:Feuille de match handball",
+    # "Équipe d'Ukraine féminine de handball"
 ]
-
-pages = []
 
 if __name__ == '__main__':
-    site = pywikibot.Site();
-    site.login()
-
-    coalemos = CoalemosBot(site, pages)
+    coalemos = CoalemosBot(pages)
     # coalemos.addCategory("Handball")
-    coalemos.addCategory("Équipe nationale de handball")
+    # coalemos.addCategory("Équipe nationale de handball")
     coalemos.addCategory("Championnat panaméricain féminin de handball")
     coalemos.addCategory("Championnat panaméricain masculin de handball")
-    coalemos.fixInternalLink()
+    # coalemos.fixInternalLink()
+    coalemos.getUnusedRedirect()
 
     # coalemos.updateUserContibutions('Programmateur01')
 

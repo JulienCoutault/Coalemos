@@ -1,23 +1,35 @@
 import re
+import sys
 
 import pywikibot
 
-from scripts.updateUserContributionsBox import updateUserContributionsBox
 from scripts.fixInternalLink import fixInternalLink
+from scripts.getUnusedRedirect import getUnusedRedirect
+from scripts.updateUserContributionsBox import updateUserContributionsBox
 from scripts.startTranslate.handballPage import handballPage
 
 
 class CoalemosBot():
     pages = []
+    nbPage = 0
 
-    def __init__(self, site, pages = []):
-        self.site = site
+    def __init__(self, pages = []):
+        self.site = pywikibot.Site();
+        self.site.login()
+
+        print(self.nbPage)
         for pageName in pages:
+            self.nbPage += 1
+            sys.stdout.write("\033[F")
+            print(self.nbPage)
             self.pages.append(pywikibot.Page(self.site, pageName))
 
     def addCategory(self, catName):
         cat = pywikibot.Category(self.site, "Catégorie:" + catName)
-        for page in cat.articles(recurse=False):
+        for page in cat.articles(recurse=True):
+            self.nbPage += 1
+            sys.stdout.write("\033[F")
+            print(self.nbPage)
             self.pages.append(page)
 
     def addPage(self, pageName):
@@ -25,6 +37,27 @@ class CoalemosBot():
 
     def cleanDraft(self):
         self.updateDraft('')
+
+    def getUnusedRedirect(self):
+        text = '\n'
+        i = 0
+        for page in self.pages:
+            i += 1
+            sys.stdout.write("\033[F")
+            print("({}/{}) {}                              ".format(i, self.nbPage, page.title()))
+            links = getUnusedRedirect(page.title())
+            if links != []:
+                text += "== [[{}]] ==\n".format(page.title())
+                for link in links:
+                    text += "* [[Spécial:Pages_liées/{}|{}]]\n".format(link,link)
+
+
+        # update user page
+
+        page = pywikibot.Page(self.site, u'Utilisateur:CoalémosBot/bot/Redirections_inutilisées')
+        page.text = (re.sub('(<!-- BEGIN BOT SECTION -->)(\n|\s|.)*(<!-- END BOT SECTION -->)',
+            r'\1\n{}\n\3'.format(text), page.text))
+        page.save('([[bot]]) Mise a jour', minor=False, botflag=True)
 
     def fixInternalLink(self):
         for page in self.pages:
