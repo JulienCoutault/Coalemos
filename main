@@ -18,11 +18,18 @@ def parse_args():
         prog='Coalemos',
         description='Use many scripts to improve Wikipedia'
     )
+    parser.add_argument('-a', '--all', action='store_true', help='Execute all scripts')
+
     parser.add_argument('-c', '--contributions', action='store_true', help='Update contributions for users')
     parser.add_argument('-il', '--internalLinks', action='store_true', help='Replace Links into pages')
     parser.add_argument('-ur', '--unusedRedirect', action='store_true', help='List unusedRedirect into bot page (/bot/UnusedRedirect)')
 
     args = parser.parse_args()
+    if args.all:
+        args.contributions = True
+        args.internalLinks = True
+        args.unusedRedirect = True
+        
     return args
 
 if __name__ == '__main__':
@@ -34,7 +41,7 @@ if __name__ == '__main__':
 
     args = parse_args()
     if args.contributions:
-        coalemos.updateUserContibutions('Programmateur01')
+        coalemos.updateUserContributionsBox()
     elif args.internalLinks:
         coalemos.fixInternalLinks()
     elif args.unusedRedirect:

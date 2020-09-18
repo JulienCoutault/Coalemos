@@ -96,8 +96,8 @@ class CoalemosBot():
 
         brouillon.save('([[bot]]) ' + msg, minor=False, botflag=True)
 
-    def updateUserContibutions(self, username):
-        updateUserContributionsBox(username)
+    def updateUserContributionsBox(self):
+        updateUserContributionsBox('Programmateur01')
 
     def translate(self, pageName):
         handballPage(pageName)
