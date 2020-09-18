@@ -54,12 +54,12 @@ class CoalemosBot():
 
         # update user page
 
-        page = pywikibot.Page(self.site, u'Utilisateur:CoalémosBot/bot/Redirections_inutilisées')
+        page = pywikibot.Page(self.site, u'Utilisateur:CoalémosBot/bot/UnusedRedirect')
         page.text = (re.sub('(<!-- BEGIN BOT SECTION -->)(\n|\s|.)*(<!-- END BOT SECTION -->)',
             r'\1\n{}\n\3'.format(text), page.text))
         page.save('([[bot]]) Mise a jour', minor=False, botflag=True)
 
-    def fixInternalLink(self):
+    def fixInternalLinks(self):
         for page in self.pages:
             # if the current page is already a redirection page
             while page.isRedirectPage():

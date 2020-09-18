@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import argparse
+
 import pywikibot
 
 from coalemosBot import CoalemosBot
@@ -8,8 +10,20 @@ from club import Club
 
 # "Modèle:Feuille de match handball",
 pages = [
-    # "Équipe d'Ukraine féminine de handball"
+    "Équipe d'Ukraine féminine de handball"
 ]
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        prog='Coalemos',
+        description='Use many scripts to improve Wikipedia'
+    )
+    parser.add_argument('-c', '--contributions', action='store_true', help='Update contributions for users')
+    parser.add_argument('-il', '--internalLinks', action='store_true', help='Replace Links into pages')
+    parser.add_argument('-ur', '--unusedRedirect', action='store_true', help='List unusedRedirect into bot page (/bot/UnusedRedirect)')
+
+    args = parser.parse_args()
+    return args
 
 if __name__ == '__main__':
     coalemos = CoalemosBot(pages)
@@ -17,11 +31,14 @@ if __name__ == '__main__':
     # coalemos.addCategory("Équipe nationale de handball")
     coalemos.addCategory("Championnat panaméricain féminin de handball")
     coalemos.addCategory("Championnat panaméricain masculin de handball")
-    # coalemos.fixInternalLink()
-    coalemos.getUnusedRedirect()
 
-    # coalemos.updateUserContibutions('Programmateur01')
-
-    # coalemos.translate("1981 Pan American Men's Handball Championship")
-
-    # coalemos.cleanDraft()
+    args = parse_args()
+    if args.contributions:
+        coalemos.updateUserContibutions('Programmateur01')
+    elif args.internalLinks:
+        coalemos.fixInternalLinks()
+    elif args.unusedRedirect:
+        coalemos.getUnusedRedirect()
+    else:
+        coalemos.translate("1981 Pan American Men's Handball Championship")
+        coalemos.cleanDraft()
