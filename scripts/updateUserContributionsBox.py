@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
+import argparse
+import os
 import re
+import sys
 
 import pywikibot
 
@@ -23,11 +26,21 @@ def updateUserContributionsBox(username):
     if box != newBox:
         # Need an update
         userPage.text = re.sub(re.escape(box), newBox, text, flags=re.IGNORECASE)
-        # print(userPage.text)
         userPage.save('Mise à jour de [[Modèle:Utilisateur Contributions]]', minor=True, botflag=True)
-    else:
-        print('{} contributionsBox already up to date'.format(username))
 
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        prog='updateUserContributionsBox',
+        description='Update the number of contributions in [[Modèle:Utilisateur Contributions]]'
+    )
+    parser.add_argument('user', help='User to update the contributions')
+
+    args = parser.parse_args()
+    return args
 
 if __name__ == '__main__':
-    pass
+    args = parse_args()
+    updateUserContributionsBox(args.user)
+
+    sys.exit(os.EX_OK)
