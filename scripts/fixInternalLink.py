@@ -9,17 +9,33 @@ def fixInternalLink(pageName):
     site.login()
     page = pywikibot.Page(site, pageName)
     text = page.get()
-    reg = [
-        (r'(Ligue des champions)\s+(de\shandball)\s+((masculin|féminin)e?)', r"\1 \4e de l'EHF"),
-        (r'(coupe EHF)\sde\shandball\s+((masculin|féminin)e?)', r"Coupe de l'EHF \3e"),
-        (r'((coupe|supercoupe)\s+([a-zÀ-ÖØ-öø-ÿ\'\s]+))\s+(de\shandball)\s+((masculin|féminin)e?)', r'\1 \6e \4'),
-        (r'((championnat)\s+([a-zÀ-ÖØ-öø-ÿ\-\'\s]+))\s+(de\shandball)\s+((masculin|féminin)e?)(\sde\sD1)?', r'\1 \6 \4'),
-        (r'((Équipe)\s+([a-zÀ-ÖØ-öø-ÿ\-\'\s]+))\s+(de\shandball)\s+((masculin|féminin)e?)', r'\2 \3 \6e \4')
-    ]
-    for r in reg:
-        text = re.sub(r[0], r[1], text, flags=re.IGNORECASE)
-    page.text = text
-    page.save('([[bot]]) Correction redirections', minor=True, botflag=True)
+    newText = text
+    nbFix = 0
+    for link in re.findall(r"\[\[([\-\'\w\dÀ-ÿ\s]+)(\|([\-\'\w\dÀ-ÿ\s]+))?\]\]", text, flags=re.IGNORECASE):
+        pageLink = pywikibot.Page(site, link[0])
+        if not pageLink.isRedirectPage():
+            if link[2] and link[2] == link[0]:
+                nbFix += 1
+                newText = newText.replace('[[{}{}]]'.format(link[0], link[1]), '[[{}]]'.format(link[0]))
+        else:
+            while pageLink.isRedirectPage():
+                pageLink = pywikibot.Page(site, pageLink.getRedirectTarget().title())
+            if link[2] and pageLink.title() == link[2]:
+                nbFix += 1
+                newText = newText.replace('[[{}{}]]'.format(link[0], link[1]), '[[{}]]'.format(pageLink.title()))
+            else:
+                nbFix += 1
+                newText = newText.replace('[[{}{}]]'.format(link[0], link[1]), '[[{}{}]]'.format(pageLink.title(), link[1]))
+
+    if nbFix:
+        print(pywikibot.showDiff(text, newText))
+        if input('Are you agree ?') == 'y':
+            page.text = newText
+            print('Validate')
+            if nbFix > 1:
+                page.save('Correction liens internes', minor=True, botflag=True)
+            else:
+                page.save('Correction lien interne', minor=True, botflag=True)
 
 
 if __name__ == '__main__':

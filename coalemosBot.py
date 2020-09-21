@@ -17,19 +17,14 @@ class CoalemosBot():
         self.site = pywikibot.Site();
         self.site.login()
 
-        print(self.nbPage)
         for pageName in pages:
             self.nbPage += 1
-            sys.stdout.write("\033[F")
-            print(self.nbPage)
             self.pages.append(pywikibot.Page(self.site, pageName))
 
     def addCategory(self, catName):
         cat = pywikibot.Category(self.site, "Catégorie:" + catName)
         for page in cat.articles(recurse=True):
             self.nbPage += 1
-            sys.stdout.write("\033[F")
-            print(self.nbPage)
             self.pages.append(page)
 
     def addPage(self, pageName):
@@ -65,9 +60,7 @@ class CoalemosBot():
             while page.isRedirectPage():
                 page = pywikibot.Page(self.site, page.getRedirectTarget().title())
 
-            for pageRedirect in page.getReferences(filter_redirects=True):
-                for pageWithRedirect in pageRedirect.getReferences():
-                    fixInternalLink(pageWithRedirect.title())
+            fixInternalLink(page.title())
 
 
     def get(self, title):
