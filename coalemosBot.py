@@ -66,17 +66,8 @@ class CoalemosBot():
                 page = pywikibot.Page(self.site, page.getRedirectTarget().title())
 
             for pageRedirect in page.getReferences(filter_redirects=True):
-                # print(pageRedirect.title())
-
-                # print('Link : ')
                 for pageWithRedirect in pageRedirect.getReferences():
-                    print('-------------')
-                    print('- page : ' + page.title())
-                    print('- pageRedirect : ' + pageRedirect.title())
-                    print('- pageWithRedirect : ' + pageWithRedirect.title())
                     fixInternalLink(pageWithRedirect.title())
-                    # fixInternalLink(u'Utilisateur:CoalémosBot/Brouillon')
-
 
 
     def get(self, title):
@@ -101,12 +92,3 @@ class CoalemosBot():
 
     def translate(self, pageName):
         handballPage(pageName)
-
-
-    def replaceModelDate(self, page):
-        text = page.get()
-        reg = r'({{date)\ssport\(|\d{1,2}\|\w+\|\d{4}\|en\s\w+}})'
-        if (re.match(reg, text)):
-            print('FOUND - ')
-            print(page)
-            # page = re.sub(reg, '$1$2', text)
