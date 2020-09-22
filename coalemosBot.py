@@ -60,7 +60,7 @@ class CoalemosBot():
             while page.isRedirectPage():
                 page = pywikibot.Page(self.site, page.getRedirectTarget().title())
 
-            fixInternalLink(page.title())
+            fixInternalLink(self.site, page)
 
 
     def get(self, title):

@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
+import argparse
+import os
 import re
+import sys
 
 import pywikibot
 
-def fixInternalLink(pageName):
-    site = pywikibot.Site()
-    site.login()
-    page = pywikibot.Page(site, pageName)
+def fixInternalLink(site, page):
     text = page.get()
     newText = text
     nbFix = 0
@@ -38,5 +38,24 @@ def fixInternalLink(pageName):
                 page.save('Correction lien interne', minor=True, botflag=True)
 
 
+def fixInternalLinkStr(pageName):
+    site = pywikibot.Site()
+    site.login()
+    page = pywikibot.Page(site, pageName)
+    return fixInternalLink(site, page)
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        prog='fixInternalLink',
+        description='Check internal link to replace redirection'
+    )
+    parser.add_argument('page', help='page to check')
+
+    args = parser.parse_args()
+    return args
+
 if __name__ == '__main__':
-    pass
+    args = parse_args()
+    fixInternalLinkStr(args.page)
+
+    sys.exit(os.EX_OK)
