@@ -28,7 +28,7 @@ def fixInternalLink(site, page):
                 newText = newText.replace('[[{}{}]]'.format(link[0], link[1]), '[[{}{}]]'.format(pageLink.title(), link[1]))
 
     if nbFix:
-        print(pywikibot.showDiff(text, newText))
+        pywikibot.showDiff(text, newText)
         if input('Are you agree ? : ') == 'y':
             page.text = newText
             if nbFix > 1:
