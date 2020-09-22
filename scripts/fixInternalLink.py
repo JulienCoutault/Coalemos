@@ -29,9 +29,8 @@ def fixInternalLink(site, page):
 
     if nbFix:
         print(pywikibot.showDiff(text, newText))
-        if input('Are you agree ?') == 'y':
+        if input('Are you agree ? : ') == 'y':
             page.text = newText
-            print('Validate')
             if nbFix > 1:
                 page.save('Correction liens internes', minor=True, botflag=True)
             else:
