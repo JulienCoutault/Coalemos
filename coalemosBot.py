@@ -5,6 +5,7 @@ import sys
 import pywikibot
 
 from scripts.fixInternalLink import fixInternalLink
+from scripts.fixModels import fixModels
 from scripts.getUnusedRedirect import getUnusedRedirect
 from scripts.updateUserContributionsBox import updateUserContributionsBox
 from scripts.startTranslate.handballPage import handballPage
@@ -36,11 +37,7 @@ class CoalemosBot:
 
     def getUnusedRedirect(self):
         text = '\n'
-        i = 0
         for page in self.pages:
-            i += 1
-            sys.stdout.write("\033[F")
-            print("({}/{}) {}                              ".format(i, self.nbPage, page.title()))
             links = getUnusedRedirect(page.title())
             if links != []:
                 text += "== [[{}]] ==\n".format(page.title())
@@ -63,6 +60,13 @@ class CoalemosBot:
 
             fixInternalLink(self.site, page)
 
+    def fixModels(self):
+        for page in self.pages:
+            # if the current page is already a redirection page
+            while page.isRedirectPage():
+                page = pywikibot.Page(self.site, page.getRedirectTarget().title())
+
+            fixModels(page)
 
     def get(self, title):
         self.title = title
