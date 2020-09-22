@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 import re
 import sys
 
@@ -9,26 +10,26 @@ from scripts.updateUserContributionsBox import updateUserContributionsBox
 from scripts.startTranslate.handballPage import handballPage
 
 
-class CoalemosBot():
+class CoalemosBot:
     pages = []
-    nbPage = 0
 
-    def __init__(self, pages = []):
-        self.site = pywikibot.Site();
+    def __init__(self, pages=[]):
+        self.site = pywikibot.Site()
         self.site.login()
 
         for pageName in pages:
-            self.nbPage += 1
-            self.pages.append(pywikibot.Page(self.site, pageName))
+            self.addPage(pageName)
 
     def addCategory(self, catName):
         cat = pywikibot.Category(self.site, "Catégorie:" + catName)
         for page in cat.articles(recurse=True):
-            self.nbPage += 1
-            self.pages.append(page)
+            if page.userName() != 'CoalémosBot':
+                self.pages.append(page)
 
     def addPage(self, pageName):
-        self.pages.append(pywikibot.Page(self.site, pageName))
+        page = pywikibot.Page(self.site, pageName)
+        if page.userName() != 'CoalémosBot':
+            self.pages.append(page)
 
     def cleanDraft(self):
         self.updateDraft('')
