@@ -49,6 +49,8 @@ def formatTemplate(text, template):
     text.replace(template, newTemplate)
 
 
+
+
 def fixModelsStr(pageName):
     site = pywikibot.Site()
     site.login()
@@ -59,7 +61,7 @@ def fixModelsStr(pageName):
 def parse_args():
     parser = argparse.ArgumentParser(
         prog='fixModel',
-        description='Check models in page'
+        description='Check template in page'
     )
     parser.add_argument('page', help='page to check')
 

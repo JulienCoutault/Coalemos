@@ -5,7 +5,7 @@ import sys
 import pywikibot
 
 from scripts.fixInternalLink import fixInternalLink
-from scripts.fixModels import fixModels
+from scripts.template import fixModels
 from scripts.getUnusedRedirect import getUnusedRedirect
 from scripts.updateUserContributionsBox import updateUserContributionsBox
 from scripts.startTranslate.handballPage import handballPage
