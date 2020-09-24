@@ -9,7 +9,6 @@ from coalemosBot import CoalemosBot
 from club import Club
 
 pages = [
-    "Équipe_d'Argentine_masculine_de_handball"
 ]
 
 def parse_args():
@@ -18,7 +17,7 @@ def parse_args():
         description='Use many scripts to improve Wikipedia'
     )
     parser.add_argument('-a', '--all', action='store_true', help='Execute all scripts')
-    parser.add_argument('--auto', action='store_true', default=False, help="Work without verification")
+    parser.add_argument('-f', '--force', action='store_true', default=False, help="Work without verification")
 
     parser.add_argument('--contributions', action='store_true', help='Update contributions for users')
     parser.add_argument('--internalLinks', action='store_true', help='Replace Links into pages')
@@ -35,7 +34,7 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
 
-    coalemos = CoalemosBot(pages, args.auto)
+    coalemos = CoalemosBot(pages, args.force)
     # coalemos.addCategory("Équipe nationale de handball")
     # coalemos.addCategory("Championnat panaméricain féminin de handball")
     # coalemos.addCategory("Championnat panaméricain masculin de handball")

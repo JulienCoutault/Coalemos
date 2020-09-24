@@ -7,7 +7,7 @@ import sys
 
 import pywikibot
 
-def fixInternalLink(site, page, auto=False):
+def fixInternalLink(site, page, force=False):
     text = page.get()
     newText = text
     nbFix = 0
@@ -29,7 +29,7 @@ def fixInternalLink(site, page, auto=False):
 
     if nbFix:
         page.text = newText
-        if not auto:
+        if not force:
             pywikibot.showDiff(text, newText)
             if input('Are you agree ? : ') == 'y':
                 if nbFix > 1:
@@ -42,11 +42,11 @@ def fixInternalLink(site, page, auto=False):
             else:
                 page.save('Correction lien interne', minor=True, botflag=True)
 
-def fixInternalLinkStr(pageName, auto=False):
+def fixInternalLinkStr(pageName, force=False):
     site = pywikibot.Site()
     site.login()
     page = pywikibot.Page(site, pageName)
-    return fixInternalLink(site, page, auto)
+    return fixInternalLink(site, page, force)
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -54,13 +54,13 @@ def parse_args():
         description='Check internal link to replace redirection'
     )
     parser.add_argument('page', help='page to check')
-    parser.add_argument('--auto', action='store_true', default=False, help="Work without verification")
+    parser.add_argument('-f', '--force', action='store_true', default=False, help="Work without verification")
 
     args = parser.parse_args()
     return args
 
 if __name__ == '__main__':
     args = parse_args()
-    fixInternalLinkStr(args.page, args.auto)
+    fixInternalLinkStr(args.page, args.force)
 
     sys.exit(os.EX_OK)
