@@ -8,7 +8,7 @@ import sys
 import pywikibot
 
 
-def updateUserContributionsBox(username):
+def updateUserContributionsBox(username, auto=False):
     site = pywikibot.Site()
     site.login()
     user = pywikibot.User(site, username)
@@ -23,10 +23,16 @@ def updateUserContributionsBox(username):
     regexBox = r'{{Utilisateur Contributions\|\d+}}'
     box = re.search(regexBox, text, flags=re.IGNORECASE).group(0)
     newBox = '{{Utilisateur Contributions|'+str(contributions)+'}}'
+    newText = re.sub(re.escape(box), newBox, text, flags=re.IGNORECASE)
+    userPage.text = newText
     if box != newBox:
         # Need an update
-        userPage.text = re.sub(re.escape(box), newBox, text, flags=re.IGNORECASE)
-        userPage.save('Mise à jour de [[Modèle:Utilisateur Contributions]]', minor=True, botflag=True)
+        if not auto:
+            pywikibot.showDiff(text, newText)
+            if input('Are you agree ? : ') == 'y':
+                userPage.save('Mise à jour de [[Modèle:Utilisateur Contributions]]', minor=True, botflag=True)
+        else:
+            userPage.save('Mise à jour de [[Modèle:Utilisateur Contributions]]', minor=True, botflag=True)
 
 
 def parse_args():
@@ -35,12 +41,13 @@ def parse_args():
         description='Update the number of contributions in [[Modèle:Utilisateur Contributions]]'
     )
     parser.add_argument('user', help='User to update the contributions')
+    parser.add_argument('--auto', action='store_true', default=False, help="Work without verification")
 
     args = parser.parse_args()
     return args
 
 if __name__ == '__main__':
     args = parse_args()
-    updateUserContributionsBox(args.user)
+    updateUserContributionsBox(args.user, args.auto)
 
     sys.exit(os.EX_OK)
