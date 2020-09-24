@@ -11,7 +11,7 @@ def fixInternalLink(site, page, force=False):
     text = page.get()
     newText = text
     nbFix = 0
-    for link in re.findall(r"\[\[([\-\'\w\dÀ-ÿ\s]+)(\|([\-\'\w\dÀ-ÿ\s]+))?\]\]", text, flags=re.IGNORECASE):
+    for link in re.findall(r"\[\[([\-\'\w\dÀ-ÿ\s\(\)]+)(\|([\-\'\w\dÀ-ÿ\s\(\)]+))?\]\]", text, flags=re.IGNORECASE):
         pageLink = pywikibot.Page(site, link[0])
         if not pageLink.isRedirectPage():
             if link[2] and link[2] == link[0]:
