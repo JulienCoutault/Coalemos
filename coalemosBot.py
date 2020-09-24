@@ -13,10 +13,12 @@ from scripts.startTranslate.handballPage import handballPage
 
 class CoalemosBot:
     pages = []
+    auto = False
 
-    def __init__(self, pages=[]):
+    def __init__(self, pages=[], auto=False):
         self.site = pywikibot.Site()
         self.site.login()
+        self.auto = auto
 
         for pageName in pages:
             self.addPage(pageName)
@@ -58,7 +60,7 @@ class CoalemosBot:
             while page.isRedirectPage():
                 page = pywikibot.Page(self.site, page.getRedirectTarget().title())
 
-            fixInternalLink(self.site, page)
+            fixInternalLink(self.site, page, self.auto)
 
     def fixModels(self):
         for page in self.pages:
@@ -66,7 +68,7 @@ class CoalemosBot:
             while page.isRedirectPage():
                 page = pywikibot.Page(self.site, page.getRedirectTarget().title())
 
-            fixModels(page)
+            fixModels(page, self.auto)
 
     def get(self, title):
         self.title = title
@@ -86,7 +88,7 @@ class CoalemosBot:
         brouillon.save('([[bot]]) ' + msg, minor=False, botflag=True)
 
     def updateUserContributionsBox(self):
-        updateUserContributionsBox('Programmateur01')
+        updateUserContributionsBox('Programmateur01', self.auto)
 
     def translate(self, pageName):
         handballPage(pageName)
