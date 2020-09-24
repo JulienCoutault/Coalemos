@@ -7,7 +7,7 @@ import sys
 
 import pywikibot
 
-def fixInternalLink(site, page):
+def fixInternalLink(site, page, auto=False):
     text = page.get()
     newText = text
     nbFix = 0
@@ -28,20 +28,25 @@ def fixInternalLink(site, page):
                 newText = newText.replace('[[{}{}]]'.format(link[0], link[1]), '[[{}{}]]'.format(pageLink.title(), link[1]))
 
     if nbFix:
-        pywikibot.showDiff(text, newText)
-        if input('Are you agree ? : ') == 'y':
-            page.text = newText
+        page.text = newText
+        if not auto:
+            pywikibot.showDiff(text, newText)
+            if input('Are you agree ? : ') == 'y':
+                if nbFix > 1:
+                    page.save('Correction liens internes', minor=True, botflag=True)
+                else:
+                    page.save('Correction lien interne', minor=True, botflag=True)
+        else:
             if nbFix > 1:
                 page.save('Correction liens internes', minor=True, botflag=True)
             else:
                 page.save('Correction lien interne', minor=True, botflag=True)
 
-
-def fixInternalLinkStr(pageName):
+def fixInternalLinkStr(pageName, auto=False):
     site = pywikibot.Site()
     site.login()
     page = pywikibot.Page(site, pageName)
-    return fixInternalLink(site, page)
+    return fixInternalLink(site, page, auto)
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -49,12 +54,13 @@ def parse_args():
         description='Check internal link to replace redirection'
     )
     parser.add_argument('page', help='page to check')
+    parser.add_argument('--auto', action='store_true', default=False, help="Work without verification")
 
     args = parser.parse_args()
     return args
 
 if __name__ == '__main__':
     args = parse_args()
-    fixInternalLinkStr(args.page)
+    fixInternalLinkStr(args.page, args.auto)
 
     sys.exit(os.EX_OK)
