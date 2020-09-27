@@ -5,7 +5,7 @@ import sys
 import pywikibot
 
 from scripts.fixInternalLink import fixInternalLink
-from scripts.template import fixModels
+from scripts.template import fixTemplates
 from scripts.getUnusedRedirect import getUnusedRedirect
 from scripts.updateUserContributionsBox import updateUserContributionsBox
 from scripts.startTranslate.handballPage import handballPage
@@ -15,13 +15,29 @@ class CoalemosBot:
     pages = []
     force = False
 
-    def __init__(self, pages=[], force=False):
+    def __init__(self, args, pages=[]):
         self.site = pywikibot.Site()
         self.site.login()
-        self.force = force
+        self.args = args
 
         for pageName in pages:
             self.addPage(pageName)
+
+    def run(self):
+        for page in self.pages:
+            msg = None
+            # if the current page is already a redirection page
+            while page.isRedirectPage():
+                page = pywikibot.Page(self.site, page.getRedirectTarget().title())
+
+            text = page.text
+            if self.args.fixTemplates or self.args.all:
+                msg = fixTemplates(page)
+
+            if msg:
+                pywikibot.showDiff(text, page.text)
+                if self.args.force or input('Are you agree ? : ') == 'y':
+                    page.save(msg, botflag=True)
 
     def addCategory(self, catName):
         cat = pywikibot.Category(self.site, "Catégorie:" + catName)
@@ -61,14 +77,6 @@ class CoalemosBot:
                 page = pywikibot.Page(self.site, page.getRedirectTarget().title())
 
             fixInternalLink(self.site, page, self.force)
-
-    def fixModels(self):
-        for page in self.pages:
-            # if the current page is already a redirection page
-            while page.isRedirectPage():
-                page = pywikibot.Page(self.site, page.getRedirectTarget().title())
-
-            fixModels(page, self.force)
 
     def get(self, title):
         self.title = title

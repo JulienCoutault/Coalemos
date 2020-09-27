@@ -9,6 +9,7 @@ from coalemosBot import CoalemosBot
 from club import Club
 
 pages = [
+    "Championnat_de_Tunisie_masculin_de_handball_1976-1977"
 ]
 
 def parse_args():
@@ -22,30 +23,21 @@ def parse_args():
     parser.add_argument('--contributions', action='store_true', help='Update contributions for users')
     parser.add_argument('--internalLinks', action='store_true', help='Replace Links into pages')
     parser.add_argument('--unusedRedirect', action='store_true', help='List unusedRedirect into bot page (/bot/UnusedRedirect)')
+    parser.add_argument('--fixTemplates', action='store_true', help='Fix templates')
 
-    args = parser.parse_args()
-    if args.all:
-        args.contributions = True
-        args.internalLinks = True
-        args.unusedRedirect = True
-
-    return args
+    return parser.parse_args()
 
 if __name__ == '__main__':
     args = parse_args()
 
-    coalemos = CoalemosBot(pages, args.force)
+    coalemos = CoalemosBot(args, pages)
     # coalemos.addCategory("Équipe nationale de handball")
     # coalemos.addCategory("Championnat panaméricain féminin de handball")
     # coalemos.addCategory("Championnat panaméricain masculin de handball")
 
-    if args.contributions:
+    coalemos.run()
+
+    if args.contributions or args.all:
         coalemos.updateUserContributionsBox()
-    elif args.internalLinks:
-        coalemos.fixInternalLinks()
-    elif args.unusedRedirect:
-        coalemos.getUnusedRedirect()
-    else:
-        print("No instruction given")
 
     # coalemos.translate("1981 Pan American Men's Handball Championship")
