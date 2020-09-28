@@ -16,14 +16,20 @@ def fixTemplates(page):
     for template in newText.filter_templates():
         if template.name.matches("Infobox Compétition sportive"):
             if fixInfobox_Competition_sportive(newText, template):
-                if template.name not in modelsChange:
-                    modelsChange.append(str(template.name))
+                name = str(template.name).strip()
+                if name not in modelsChange:
+                    modelsChange.append(name)
+        elif template.name.matches("Feuille de match handball"):
+            if fixFeuille_de_match_handball(newText, template):
+                name = str(template.name).strip()
+                if name not in modelsChange:
+                    modelsChange.append(name)
 
     if modelsChange:
         if len(modelsChange) == 1:
             msg = "Correction du modèle " + modelsChange[0]
         else:
-            msg = "Correction des modèles " + str(modelsChange).strip('[]').replace("'", '')
+            msg = "Correction des modèles " + ", ".join(modelsChange)
         page.text = newText
 
         return msg
@@ -34,20 +40,43 @@ def formatTemplate(text, template):
 
     # cut the model
     for line in template.params:
-        param, value = re.findall(r'^([^=]*)=(.*)?$', line.strip())[0]
-        param = param.strip()
+        param = str(line.name).strip()
+        value = str(line.value).strip()
         if len(param) > maxLengthParam:
             maxLengthParam = len(param)
         listParams.append([param, value.strip()])
 
     # build the model
+    newTemplate = mwparserfromhell.nodes.template.Template(template.name)
     params = []
-    for line in listParams:
-        params.append(' {}{} = {}\n'.format(line[0], ' ' * (maxLengthParam - len(line[0])), line[1]))
-
-    newTemplate = mwparserfromhell.nodes.template.Template(template.name, params)
+    for param in listParams:
+        newTemplate.add(' {}{}'.format(param[0].strip(), ' ' * (maxLengthParam - len(param[0]) + 1)), " "+param[1]+"\n", preserve_spacing=False)
 
     text.replace(template, newTemplate)
+
+################
+# MODELS FIXES #
+################
+def fixFeuille_de_match_handball(newText, template):
+    change = False
+    commonMistake = {
+        "arbitre": "arbitres",
+        "Heure": "heure",
+        "mi-temps": "score mi-temps",
+        "SCORE MI-TEMPS": "score mi-temps",
+        "stade": "lieu",
+        "stadium": "lieu",
+    }
+    for param in template.params:
+        name = str(param.name).strip()
+        value = str(param.value).strip()
+        if name in commonMistake:
+            change = True
+            template.add(commonMistake[name], value, before=name)
+            template.remove(name)
+
+    formatTemplate(newText, template)
+    return change
 
 def fixInfobox_Competition_sportive(newText, template):
     change = False
@@ -55,31 +84,34 @@ def fixInfobox_Competition_sportive(newText, template):
         "relégués": "relégué fin",
         "promus début": "promu début"
     }
-    if template.has("date", True):
-        # page for one edition
-        if template.has("éditions", True):
-            # param doesn't exist, judge it's a typo for édition
+    for param in template.params:
+        name = str(param.name).strip()
+        value = str(param.value).strip()
+        if name == "éditions":
+            if template.has("date", True):
+                # page for one edition
+                # param doesn't exist, judge it's a typo for édition
+                change = True
+                template.add('édition', value, before=name)
+                template.remove(name)
+            else:
+                # resume page for all editions
+                # param doesn't exist, judge it's a typo for nombre d'éditions
+                change = True
+                template.add("nombre d'éditions", value, before=name)
+                template.remove(name)
+        elif name == "nombre d'éditions":
+            if template.has("date", True):
+                # page for one edition
+                if not template.has("édition", True):
+                    # judge it's a mistake with édition
+                    change = True
+                    template.add('édition', value, before=name)
+                    template.remove(name)
+        elif name in commonMistake:
             change = True
-            template.add('édition', template.get("éditions").value.strip(), before="éditions")
-            template.remove("éditions")
-        if not template.has("édition", True) and template.has("nombre d'éditions", True):
-            # judge it's a mistake with édition
-            change = True
-            template.add('édition', template.get("nombre d'éditions").value.strip(), before="nombre d'éditions")
-            template.remove("nombre d'éditions")
-    else:
-        # resume page for all editions
-        if template.has("éditions", True):
-            # param doesn't exist, judge it's a typo for nombre d'éditions
-            change = True
-            template.add("nombre d'éditions", template.get("éditions").value.strip(), before="éditions")
-            template.remove("éditions")
-
-    for mistake in commonMistake:
-        if template.has(mistake, True):
-            change = True
-            template.add(commonMistake[mistake], template.get(mistake).value.strip(), before=mistake)
-            template.remove(mistake)
+            template.add(commonMistake[name], value, before=name)
+            template.remove(name)
 
     formatTemplate(newText, template)
     return change
