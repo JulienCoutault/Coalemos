@@ -9,7 +9,7 @@ from coalemosBot import CoalemosBot
 from club import Club
 
 pages = [
-    "Championnat_de_Tunisie_masculin_de_handball_1976-1977"
+    "Tournoi_féminin_de_handball_aux_Jeux_olympiques_d'été_de_2012"
 ]
 
 def parse_args():
@@ -21,7 +21,7 @@ def parse_args():
     parser.add_argument('-f', '--force', action='store_true', default=False, help="Work without verification")
 
     parser.add_argument('--contributions', action='store_true', help='Update contributions for users')
-    parser.add_argument('--internalLinks', action='store_true', help='Replace Links into pages')
+    parser.add_argument('--fixInternalLinks', action='store_true', help='Replace Links into pages')
     parser.add_argument('--unusedRedirect', action='store_true', help='List unusedRedirect into bot page (/bot/UnusedRedirect)')
     parser.add_argument('--fixTemplates', action='store_true', help='Fix templates')
 

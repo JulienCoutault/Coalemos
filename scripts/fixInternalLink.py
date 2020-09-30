@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import argparse
 import os
 import re
@@ -20,7 +18,7 @@ def fixInternalLink(site, page, force=False):
             newText = newText.replace('[[{}{}]]'.format(link[0], link[1]), '[[{}{}]]'.format(newLink, link[1]))
             link[0] = newLink
 
-        if link[2]:
+        if link[2] or 'masculin' in link[0] or 'féminin' in link[0]:
             # fix redirect only if target is specify
             pageLink = pywikibot.Page(site, link[0])
             if not pageLink.isRedirectPage():
@@ -41,41 +39,7 @@ def fixInternalLink(site, page, force=False):
 
     if nbFix:
         page.text = newText
-        if not force:
-            pywikibot.showDiff(text, newText)
-            if input('Are you agree ? : ') == 'y':
-                if nbFix > 1:
-                    page.save('Correction liens internes', minor=True, botflag=True)
-                else:
-                    page.save('Correction lien interne', minor=True, botflag=True)
+        if nbFix > 1:
+            return 'Correction liens internes'
         else:
-            if nbFix > 1:
-                page.save('Correction liens internes', minor=True, botflag=True)
-            else:
-                page.save('Correction lien interne', minor=True, botflag=True)
-
-
-def fixInternalLinkStr(pageName, force=False):
-    site = pywikibot.Site()
-    site.login()
-    page = pywikibot.Page(site, pageName)
-    return fixInternalLink(site, page, force)
-
-
-def parse_args():
-    parser = argparse.ArgumentParser(
-        prog='fixInternalLink',
-        description='Check internal link to replace redirection'
-    )
-    parser.add_argument('page', help='page to check')
-    parser.add_argument('-f', '--force', action='store_true', default=False, help="Work without verification")
-
-    args = parser.parse_args()
-    return args
-
-
-if __name__ == '__main__':
-    args = parse_args()
-    fixInternalLinkStr(args.page, args.force)
-
-    sys.exit(os.EX_OK)
+            return 'Correction lien interne'

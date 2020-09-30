@@ -35,7 +35,12 @@ class CoalemosBot:
                 msg = fixTemplates(page)
 
             if msg:
+                if self.args.fixInternalLinks or self.args.all:
+                    msg2 = fixInternalLink(self.site, page, self.force)
+                    if msg2:
+                        msg += ' + ' + msg2
                 pywikibot.showDiff(text, page.text)
+                print(msg)
                 if self.args.force or input('Are you agree ? : ') == 'y':
                     page.save(msg, botflag=True)
 
