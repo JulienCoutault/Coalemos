@@ -69,7 +69,6 @@ class CoalemosBot:
 
 
         # update user page
-
         page = pywikibot.Page(self.site, u'Utilisateur:CoalémosBot/bot/UnusedRedirect')
         page.text = (re.sub('(<!-- BEGIN BOT SECTION -->)(\n|\s|.)*(<!-- END BOT SECTION -->)',
             r'\1\n{}\n\3'.format(text), page.text))

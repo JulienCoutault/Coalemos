@@ -35,9 +35,12 @@ if __name__ == '__main__':
     # coalemos.addCategory("Championnat panaméricain féminin de handball")
     # coalemos.addCategory("Championnat panaméricain masculin de handball")
 
+    print("Start COALEMOS")
     coalemos.run()
 
     if args.contributions or args.all:
         coalemos.updateUserContributionsBox()
 
-    # coalemos.translate("1981 Pan American Men's Handball Championship")
+    coalemos.translate("1981 Pan American Men's Handball Championship")
+
+    print("Stop COALEMOS")

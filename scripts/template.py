@@ -60,12 +60,46 @@ def formatTemplate(text, template):
 def fixFeuille_de_match_handball(newText, template):
     change = False
     commonMistake = {
-        "arbitre": "arbitres",
+        # english params
+        "time": "heure",
+        "team1": "équipe1",
+        "team2": "équipe2",
+        "report": "rapport",
+        "HT": "score mi-temps",
+        "goals1": "meilleur buteur1",
+        "goals2": "meilleur buteur2",
+        "FT": "score temps regl",
+        "OT1": "score prolong1",
+        "OT2": "score prolong2",
+        "PEN": "score tab",
+
+        "twomin1": "deux minutes1",
+        "twomin2": "deux minutes2",
+        "yellow1": "cartons jaunes1",
+        "yellow2": "cartons jaunes2",
+        "red1": "cartons rouges1",
+        "red2": "cartons rouges2",
+        "blue1": "cartons bleus1",
+        "blue2": "cartons bleus2",
+        
+        "stadium": "lieu",
+        "affluence": "attirance",
+        "refrees": "arbitres",
+        "refnat": "arbnat",
+
+        # other mistakes
         "Heure": "heure",
         "mi-temps": "score mi-temps",
         "SCORE MI-TEMPS": "score mi-temps",
+        "score temps réglementaire": "score temps regl",
+        "raport": "rapport",
+        "buts 1": "meilleur buteur1",
+        "buts 2": "meilleur buteur2",
+        "carton janues1": "carton jaunes1",
+        "carton janues2": "carton jaunes2",
         "stade": "lieu",
-        "stadium": "lieu",
+        "arbitre": "arbitres",
+        "arbinat": "arbnat",
     }
     for param in template.params:
         name = str(param.name).strip()
@@ -75,14 +109,49 @@ def fixFeuille_de_match_handball(newText, template):
             template.add(commonMistake[name], value, before=name)
             template.remove(name)
 
+        if name == 'score':
+            vals = value.split('–')
+            newValue = vals[0].strip() + " – " + vals[1].strip()
+            if newValue != value:
+                change = True
+                template[name] = newValue
+            
+
     formatTemplate(newText, template)
     return change
 
 def fixInfobox_Competition_sportive(newText, template):
     change = False
     commonMistake = {
+        "Image": "image",
+        "logo": "image",
+        "Logo": "image",
+        "lieus": "lieu",
+        "lieus": "lieu",
+        "Lieu": "lieu",
+
+        "matchs": "matchs joués",
+        "match": "matchs joués",
+        "Buts": "buts",
+        "buts marqués": "buts",
+        "spectateurs": "affluence",
+       
+        "tenant du titre": "tenant",
+        "Tenant du titre": "tenant",
+        "tenants": "tenant",
+        "champion": "vainqueur",
+        "or": "vainqueur",
+        "vainqueurs": "vainqueur",
+        "deuxièmes": "deuxième",
+        "argent": "deuxième",
+        "troisièmes": "troisième",
+        "bronze": "troisième",
+
+        "relégué": "relégué fin",
         "relégués": "relégué fin",
-        "promus début": "promu début"
+        "promu": "promu début",
+        "promus": "promu début",
+        "promus début": "promu début",
     }
     for param in template.params:
         name = str(param.name).strip()
