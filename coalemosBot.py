@@ -6,9 +6,6 @@ import pywikibot
 
 from scripts.fixInternalLink import fixInternalLink
 from scripts.template import fixTemplates
-from scripts.getUnusedRedirect import getUnusedRedirect
-from scripts.updateUserContributionsBox import updateUserContributionsBox
-from scripts.startTranslate.handballPage import handballPage
 
 
 class CoalemosBot:
@@ -58,22 +55,6 @@ class CoalemosBot:
     def cleanDraft(self):
         self.updateDraft('')
 
-    def getUnusedRedirect(self):
-        text = '\n'
-        for page in self.pages:
-            links = getUnusedRedirect(page.title())
-            if links != []:
-                text += "== [[{}]] ==\n".format(page.title())
-                for link in links:
-                    text += "* [[Spécial:Pages_liées/{}|{}]]\n".format(link,link)
-
-
-        # update user page
-        page = pywikibot.Page(self.site, u'Utilisateur:CoalémosBot/bot/UnusedRedirect')
-        page.text = (re.sub('(<!-- BEGIN BOT SECTION -->)(\n|\s|.)*(<!-- END BOT SECTION -->)',
-            r'\1\n{}\n\3'.format(text), page.text))
-        page.save('([[bot]]) Mise a jour', minor=False, botflag=True)
-
     def fixInternalLinks(self):
         for page in self.pages:
             # if the current page is already a redirection page
@@ -97,7 +78,7 @@ class CoalemosBot:
         brouillon.text += text
         brouillon.text += '\n{{page personnelle}}'
 
-        brouillon.save('([[bot]]) ' + msg, minor=False, botflag=True)
+        brouillon.save(msg, minor=False, botflag=True)
 
     def updateUserContributionsBox(self):
         updateUserContributionsBox('Programmateur01', self.force)

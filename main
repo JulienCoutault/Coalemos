@@ -41,6 +41,4 @@ if __name__ == '__main__':
     if args.contributions or args.all:
         coalemos.updateUserContributionsBox()
 
-    coalemos.translate("1981 Pan American Men's Handball Championship")
-
     print("Stop COALEMOS")
