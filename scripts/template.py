@@ -108,13 +108,17 @@ def fixFeuille_de_match_handball(newText, template):
             change = True
             template.add(commonMistake[name], value, before=name)
             template.remove(name)
+            name = commonMistake[name]
 
         if name == 'score':
+            value = value.replace('-', '–')
             vals = value.split('–')
             newValue = vals[0].strip() + " – " + vals[1].strip()
             if newValue != value:
                 change = True
                 template[name] = newValue
+        elif name == 'heure':
+            template[name] = re.sub(r'([0-1]?[0-9]|2[0-3]):([0-5][0-9])', '\g<1>h\g<2>', value)
             
 
     formatTemplate(newText, template)
