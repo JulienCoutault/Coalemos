@@ -199,7 +199,7 @@ def main(args):
 
     pywikibot.showDiff(text, page.text)
     if msg and (args.force or input('Are you agree ? : ') == 'y'):
-        page.save(msg, minor=false, botflag=True)
+        page.save(msg, minor=False, botflag=True)
 
 
 def parse_args():
