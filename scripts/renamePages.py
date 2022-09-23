@@ -23,10 +23,12 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
 
-    category = 'Coupe_du_monde_des_clubs_de_handball'
+    category = 'Compétition de handball en Amérique'
     message = "Renommage"
-    regexSearch = r'Coupe du monde des clubs de handball(\s\d{4})?'
-    regexReplace = r'Coupe du monde des clubs masculins de handball'
+    regexSearch = r"Championnat d'Amérique du Sud et centrale des clubs (masculin|féminin) de handball"
+    regexReplace = r"Championnat d'Amérique du Sud et centrale des clubs \1s de handball"
+    
+    renamedPages = {}
 
     site = pywikibot.Site()
     site.login()
@@ -37,10 +39,15 @@ if __name__ == '__main__':
         if page.botMayEdit() and re.search(regexSearch, page.title()):
             newTitle = re.sub(regexSearch, regexReplace, page.title())
             print('[{}] -> [{}]'.format(page.title(), newTitle))
+            renamedPages[page.title()] = newTitle
             if args.work:
                 if not args.force:
                     if input('Are you agree ? : ') == 'y':
                         page.move(newTitle, message)
                 else:
                     page.move(newTitle, message)
+    for page in renamedPages:
+        print(page)
+        print(renamedPages[page])
+
     sys.exit(os.EX_OK)
