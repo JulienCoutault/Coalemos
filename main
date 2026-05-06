@@ -6,10 +6,8 @@ import pywikibot
 
 from coalemosBot import CoalemosBot
 
-from club import Club
 
 pages = [
-    "Tournoi_féminin_de_handball_aux_Jeux_olympiques_d'été_de_2012"
 ]
 
 def parse_args():
@@ -20,7 +18,6 @@ def parse_args():
     parser.add_argument('-a', '--all', action='store_true', help='Execute all scripts')
     parser.add_argument('-f', '--force', action='store_true', default=False, help="Work without verification")
 
-    parser.add_argument('--contributions', action='store_true', help='Update contributions for users')
     parser.add_argument('--fixInternalLinks', action='store_true', help='Replace Links into pages')
     parser.add_argument('--unusedRedirect', action='store_true', help='List unusedRedirect into bot page (/bot/UnusedRedirect)')
     parser.add_argument('--fixTemplates', action='store_true', help='Fix templates')
@@ -30,15 +27,13 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
 
-    coalemos = CoalemosBot(args, pages)
-    # coalemos.addCategory("Équipe nationale de handball")
+    # coalemos = CoalemosBot(args)
+    # coalemos.addCategory("Redirection de modèle - palette")
     # coalemos.addCategory("Championnat panaméricain féminin de handball")
     # coalemos.addCategory("Championnat panaméricain masculin de handball")
 
     print("Start COALEMOS")
-    coalemos.run()
 
-    if args.contributions or args.all:
-        coalemos.updateUserContributionsBox()
+    # coalemos.run()
 
     print("Stop COALEMOS")

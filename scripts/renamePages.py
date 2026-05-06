@@ -10,8 +10,8 @@ import pywikibot
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        prog='updateUserContributionsBox',
-        description='Update the number of contributions in [[Modèle:Utilisateur Contributions]]'
+        prog='renamedPages',
+        description='Rename pages'
     )
     
     parser.add_argument('-f', '--force', action='store_true', default=False, help="Work without verification")

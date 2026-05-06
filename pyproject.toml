@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "coalemos"
+version = "0.1.0"
+description = ""
+authors = ["Programmateur01 <git@juliencoutault.fr>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pywikibot = {version = ">=11.2.0,<12.0.0"}
+mwparserfromhell = {version = ">=0.7.2,<0.8.0"}
+var-dump = "^1.2"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

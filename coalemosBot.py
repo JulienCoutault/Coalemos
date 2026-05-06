@@ -1,10 +1,5 @@
-from datetime import datetime, timedelta
-import re
-import sys
-
 import pywikibot
 
-from scripts.fixInternalLink import fixInternalLink
 from scripts.template import fixTemplates
 
 
@@ -26,6 +21,9 @@ class CoalemosBot:
             # if the current page is already a redirection page
             while page.isRedirectPage():
                 page = pywikibot.Page(self.site, page.getRedirectTarget().title())
+
+            if not page.botMayEdit():
+                continue
 
             text = page.text
             if self.args.fixTemplates or self.args.all:
@@ -55,14 +53,6 @@ class CoalemosBot:
     def cleanDraft(self):
         self.updateDraft('')
 
-    def fixInternalLinks(self):
-        for page in self.pages:
-            # if the current page is already a redirection page
-            while page.isRedirectPage():
-                page = pywikibot.Page(self.site, page.getRedirectTarget().title())
-
-            fixInternalLink(self.site, page, self.force)
-
     def get(self, title):
         self.title = title
         self.page = pywikibot.Page(self.site, title)
@@ -79,9 +69,3 @@ class CoalemosBot:
         brouillon.text += '\n{{page personnelle}}'
 
         brouillon.save(msg, minor=False, botflag=True)
-
-    def updateUserContributionsBox(self):
-        updateUserContributionsBox('Programmateur01', self.force)
-
-    def translate(self, pageName):
-        handballPage(pageName)
