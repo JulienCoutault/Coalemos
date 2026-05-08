@@ -3,6 +3,10 @@ logs
 apicache-py3
 apicache
 
+scripts/*.txt
+scripts/*.log
+scripts/*.csv
+
 poetry.lock
 pywikibot.lwp
 throttle.ctrl
